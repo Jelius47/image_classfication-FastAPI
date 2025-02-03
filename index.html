@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digit Image Classifier</title>
+</head>
+<body>
+    <!-- File input for image upload -->
+    <input type="file" id="imageInput" accept="image/*">
+    
+    <!-- Button to trigger image classification -->
+    <button onclick="uploadImage()">Classify</button>
+    
+    <!-- Paragraph to display the prediction result -->
+    <p id="predictionResult"></p>
+
+    <script type="text/javascript">
+        /**
+         * Function to upload an image and classify it using a REST API.
+         */
+        async function uploadImage() {
+            // Get the file input element
+            const input = document.getElementById("imageInput");
+            
+            // Check if a file is selected
+            if (!input.files[0]) {
+                alert("Please select a file to upload!");
+                return;
+            }
+
+            // Get the selected file
+            const file = input.files[0];
+            
+            // Create a FormData object to send the file
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // Send a POST request to the prediction API
+                const response = await fetch('http://127.0.0.1:8000/predict_image/', {
+                    method: 'POST', 
+                    body: formData
+                });
+
+                // Parse the JSON response
+                const result = await response.json();
+                
+                // Display the prediction result
+                document.getElementById("predictionResult").textContent = `Prediction: ${result.prediction}`;
+            } catch (error) {
+                // Handle errors
+                console.error("Error:", error);
+                alert("Failed to classify the image. Please try again.");
+            }
+        }
+    </script>
+</body>
+</html>
